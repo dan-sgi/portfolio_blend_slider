@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strucutred Outcome Payoff Calculator</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="https://unpkg.com/vue@3.0.0/dist/vue.global.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <style>
+        .col-sm {
+            text-align: center;
+            align-items: center;
+            padding-top: 10px;
+        }
+        .row {
+            background: rgb(235, 235, 235);
+            padding-top: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        .col-lg {
+            border-bottom: #555 solid 2px;
+            padding-top: 20px;
+            /* border-radius: 1px; */
+        }
+        p {
+            padding-top: 5px;
+            color: #333;
+        }
+        /*
+        .form-control-range {
+            margin: 10px auto;
+            width: 50%;
+            display: block;
+        }*/
+        input[type="range"] {
+            margin: 10px auto;
+            width: 50%;
+            display: block;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="col-lg">
+            <h5>Create A Custom Portfolio Allocation:</h5>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h6>Down 15 Allocation</h6>
+                <!-- <input type="number" v-model="alloc_a" @keyup="updateData">    -->
+                <p>{{allocation_a}} %</p>  
+                <input type="range" class="form-control-range" v-model="alloc_a" @input="updateData" min="0" max="100" step="1">
+            </div>
+            <div class="col-sm">
+                <h6>Down 30 Allocation</h6>
+                <!-- <input type="number" v-model="alloc_b" @keyup="updateData"> -->
+                <p>{{allocation_b}} %</p>
+                <input type="range" class="form-control-range" v-model="alloc_b" @input="updateData" min="0" max="100" step="1">
+            </div>
+            <div class="col-sm">
+                <h6>Flex Allocation</h6>                
+                <!-- <input type="number" v-model="alloc_c" @keyup="updateData"> -->
+                <p>{{allocation_c}} %</p>
+                <input type="range" class="form-control-range" v-model="alloc_c" @input="updateData" min="0" max="100" step="1">
+            </div>
+        </div>
+        
+        <div id="aggregate" style="display:none;">
+
+        </div>
+        <div id="agg">
+
+        </div>
+        </div>
+
+    </div>
+    <script>
+        Vue.createApp({
+        el: '#main',
+        data() {
+            return {
+                all_base_data: {},
+                alloc_a: 0.33,
+                alloc_b: 0.33,
+                alloc_c: 0.33,
+                allocation_a: 0,
+                allocation_b: 0,
+                allocation_c: 0
+            }
+        },
+        methods: {
+            updateData(e) {
+                
+                // weight allocations to handle non 100 sum totals
+                let total_alloc = parseFloat(this.alloc_a) + parseFloat(this.alloc_b) + parseFloat(this.alloc_c);
+                let allo_a = parseFloat(this.alloc_a) / total_alloc;
+                let allo_b = parseFloat(this.alloc_b) / total_alloc;
+                let allo_c = parseFloat(this.alloc_c) / total_alloc;
+
+                // weighted allocation display
+                this.allocation_a = Math.round(allo_a * 10000)/100;
+                this.allocation_b = Math.round(allo_b * 10000)/100;
+                this.allocation_c = Math.round(allo_c * 10000)/100;
+
+                this.alloc_a = this.allocation_a;
+                this.alloc_b = this.allocation_b;
+                this.alloc_c = this.allocation_c;
+                
+                // loop through x  and y values to update portfolio
+                for (let i = 0; i < this.all_base_data.index['x'].length; i++){
+                    let a_x = this.all_base_data.data_a['x'][i] * allo_a;
+                    let b_x = this.all_base_data.data_b['x'][i] * allo_b;
+                    let c_x = this.all_base_data.data_c['x'][i] * allo_c;
+                    let a_y = this.all_base_data.data_a['y'][i] * allo_a;
+                    let b_y = this.all_base_data.data_b['y'][i] * allo_b;
+                    let c_y = this.all_base_data.data_c['y'][i] * allo_c;
+
+                    this.all_base_data['portfolio']['x'][i] = a_x + b_x + c_x;
+                    this.all_base_data['portfolio']['y'][i] = a_y + b_y + c_y;
+                }
+                
+                this.drawCharts();
+            },
+            drawCharts() {
+                // draw the three individual traces
+                let data = [];
+                
+                // create traces
+                for (obj in this.all_base_data){
+                    let trace = this.all_base_data[obj];
+                    trace['mode'] = 'lines';
+                
+                    // assign colors, styles, and update names
+                    if (obj === 'index') {
+                        trace['line'] = {color: 'rgba(55,55,55,.8)'};
+                        trace['name'] = 'Index';
+                    } else if (obj === 'data_a') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(244,109,67,1)'};
+                        trace['name'] = 'Down 15';
+                    } else if (obj === 'data_b') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(254,224,139,1)'};
+                        trace['name'] = 'Down 30';
+                    } else if (obj === 'data_c') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(50,136,189,1)'};
+                        trace['name'] = 'Flex';
+                    } else if (obj === 'portfolio') {
+                        trace['line'] = {color: 'rgba(102,194,165,1)'};
+                        trace['name'] = 'Portfolio';
+                    }
+                    data.push(trace);
+                }
+                
+                // update layout
+                let layout = {
+                    plot_bgcolor: 'rgb(250,250,250)',
+                    xaxis: {
+                        tickformat: '%',
+                        zeroline: false,
+                        title: 'Market Return'
+                    },
+                    yaxis: {
+                        tickformat: '%',
+                        title: 'Strategy Return'
+                    },
+                    title: 'Strategy and Portfolio Payoffs'
+                };
+
+                Plotly.newPlot('agg', data, layout, {displayModeBar: false});
+            },
+            async getData() {
+                // initial data load
+                // data object for the chart
+                let all_data = { "index": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "mode": "lines", "line": { "color": "rgba(55,55,55,.8)" }, "name": "Index" }, "data_a": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.1276, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(244,109,67,1)" }, "name": "Down 15" }, "data_b": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1023, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(254,224,139,1)" }, "name": "Down 30" }, "data_c": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.2035, 0.1935, 0.1835, 0.1735, 0.1635, 0.1535, 0.1435, 0.1335, 0.1235, 0.1135, 0.1035, 0.0935, 0.0835, 0.0735, 0.0635, 0.0535, 0.0435, 0.0335, 0.0235, 0.0135, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, 0.0035, -0.0165, -0.0365, -0.0565, -0.0765, -0.0965, -0.1165, -0.1365, -0.1565, -0.1765, -0.1965, -0.2165, -0.2365, -0.2565, -0.2765, -0.2965, -0.3165, -0.3365, -0.3565, -0.3765, -0.3965, -0.4065, -0.4165, -0.4265, -0.4365, -0.4465, -0.4565, -0.4665, -0.4765, -0.4865, -0.4965 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(50,136,189,1)" }, "name": "Flex" }, "portfolio": { "x": [], "y": [], "mode": "lines", "line": { "color": "rgba(102,194,165,1)" }, "name": "Portfolio" } };
+                
+                this.all_base_data = all_data;
+            }
+        },
+        mounted: function() {
+            this.getData().then(data => {this.updateData()}).then(data => {this.drawCharts()});
+        }
+    }).mount('#main');
+
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- <script src="payoff_calc.js"></script> -->
+</body>
+</html>
