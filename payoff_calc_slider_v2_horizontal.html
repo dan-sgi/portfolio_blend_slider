@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/js/bulma-extensions.min.js"></script> -->
+    <title>Strucutred Outcome Payoff Calculator</title> 
+    
+    <style>
+        .col-sm {
+            text-align: center;
+            align-items: center;
+            padding-top: 10px;
+        }
+        .control {
+            background: rgb(235, 235, 235);
+            padding-top: 10px;
+            margin-top: 1rem;
+            border-radius: 10px;
+        }
+        .col-ul {
+            border-bottom: #555 solid 1.5px;
+            padding-top: 20px;
+            /* border-radius: 1px; */
+        }
+        p {
+            padding-top: 5px;
+            color: #333;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+        input[type=range].slider {
+            margin: .25rem 0;
+        }
+        #agg {
+            height: 95%;
+        }
+        .title:not(:last-child) {
+            margin-bottom: .5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="main" class="container">
+        <div class="column is-9 is-offset-1">
+            <div class="columns">
+                <div class="column is-full col-lg">
+                    <h4 class="title is-4">Create A Custom Portfolio Allocation</h4>
+                </div>
+            </div>
+            <!-- <div class="columns row">
+                <div class="column is-one-third col-sm">
+                    <h5 class="title is-5">Moderate Allocation</h5>
+                    
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_a" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_a" @input="updateData" min="0" max="100" step="1">
+                            <p>{{ allocation_a}} %</p>
+                        </div>
+                        
+                    </div>
+                      
+                </div>
+                <div class="column is-one-third col-sm">
+                    <h5 class="title is-5">Conservative Allocation</h5>
+                    
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_b" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_b" @input="updateData" min="0" max="100" step="1">
+                            <p>{{allocation_b}} %</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-one-third col-sm">
+                    <h5 class="title is-5">Flex Allocation</h5>                
+                  
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_c" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_c" @input="updateData" min="0" max="100" step="1">
+                            <p>{{allocation_c}} %</p>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            
+        </div> 
+            <div class="columns">
+                <div class="column is-2 is-offset-1 col-sm control">
+                    <h5 class="title is-5">Moderate Allocation</h5>
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <!-- <input type="text" class="input" v-model="dollar_a_str" > -->
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_a" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_a" @input="updateData" min="0" max="100" step="1">
+                            <p>{{ allocation_a}} %</p>
+                        </div>
+                        
+                    </div>
+                    <h5 class="title is-5">Conservative Allocation</h5>
+                    
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_b" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_b" @input="updateData" min="0" max="100" step="1">
+                            <p>{{allocation_b}} %</p>
+                        </div>
+                    </div>
+                    <h5 class="title is-5">Flex Allocation</h5>                
+                    <div class="columns">
+                        <div class="column is-10 is-offset-1">
+                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_c" @input="updateDollarData">
+                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_c" @input="updateData" min="0" max="100" step="1">
+                            <p>{{allocation_c}} %</p>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-8">
+                    <div v-if="total_dollar > 0" class="column is-11 col-ul">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <h5 class="title is-5">Initial Portfolio Value:</h5>
+                            </div>
+                            <div class="level-item">
+                                {{total_dollar_display}}
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div v-else class="column is-11 col-ul">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <h5 class="title is-5">Initial Portfolio Value:</h5>
+                            </div>
+                            <div class="level-item">
+                                $0
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agg"></div>
+                </div>
+            
+                
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3.0.0/dist/vue.global.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/v-money@0.8.1/dist/v-money.min.js"></script> -->
+    <!-- <script src="https://unpkg.com/vue-currency-input@1.22.3"></script> -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        
+        Vue.createApp({
+        el: '#main',
+        data() {
+            return {
+                all_base_data: {},
+                alloc_a: 0.33,
+                alloc_b: 0.33,
+                alloc_c: 0.33,
+                allocation_a: 0,
+                allocation_b: 0,
+                allocation_c: 0,
+                dollar_a: null,
+                dollar_b: null,
+                dollar_c: null,
+                total_dollar: 0,
+                hover_rtn: null,
+                hover_dol: null
+                // est_portfolio: null
+            }
+        },
+        methods: {
+            updateDollarData(e){
+                if (this.dollar_a > 0 || this.dollar_b > 0 || this.dollar_c > 0) {
+                    // this.dollar_a = this.dollar_a;
+                    // this.dollar_b = this.dollar_b;
+                    // this.dollar_c = this.dollar_c;
+                    this.total_dollar = Number(this.dollar_a) + Number(this.dollar_b) + Number(this.dollar_c);
+           
+                    this.alloc_a = Math.round(this.dollar_a / this.total_dollar * 10000)/100;
+                    this.alloc_b = Math.round(this.dollar_b / this.total_dollar * 10000)/100;
+                    this.alloc_c = Math.round(this.dollar_c / this.total_dollar * 10000)/100;
+
+                    // weighted allocation display
+                    this.allocation_a = this.alloc_a;
+                    this.allocation_b = this.alloc_b;
+                    this.allocation_c = this.alloc_c;
+
+                    this.updatePlots();
+                    
+                    // add dollar value as text to the trace
+                    this.all_base_data['portfolio']['text'] = [];
+                    for  (let i = 0; i < this.all_base_data['portfolio']['y'].length; i++) {
+                        const formats = { style: 'currency', currency: 'USD'};
+
+                        let dollar_val = (1+this.all_base_data['portfolio']['y'][i]).toFixed(2) * this.total_dollar;
+                        dollar_val = new Intl.NumberFormat('en-US', formats).format(dollar_val);
+                        this.all_base_data['portfolio']['text'].push(dollar_val);
+                    }
+                     
+                } else {
+                    // weight allocations to handle non 100 sum totals
+                    let total_alloc = parseFloat(this.alloc_a) + parseFloat(this.alloc_b) + parseFloat(this.alloc_c);
+                    allo_a = parseFloat(this.alloc_a) / total_alloc;
+                    allo_b = parseFloat(this.alloc_b) / total_alloc;
+                    allo_c = parseFloat(this.alloc_c) / total_alloc;
+
+                    // weighted allocation display
+                    this.allocation_a = Math.round(allo_a * 10000)/100;
+                    this.allocation_b = Math.round(allo_b * 10000)/100;
+                    this.allocation_c = Math.round(allo_c * 10000)/100;
+
+                    this.alloc_a = this.allocation_a;
+                    this.alloc_b = this.allocation_b;
+                    this.alloc_c = this.allocation_c;
+
+                    // add dollar value as text to the trace
+                    this.all_base_data['portfolio']['text'] = [];
+                }
+
+                this.updatePlots();
+                this.drawCharts();
+            },
+            updateData(e) {
+                let allo_a;
+                let allo_b;
+                let allo_c;
+
+               
+                // weight allocations to handle non 100 sum totals
+                let total_alloc = parseFloat(this.alloc_a) + parseFloat(this.alloc_b) + parseFloat(this.alloc_c);
+                allo_a = parseFloat(this.alloc_a) / total_alloc;
+                allo_b = parseFloat(this.alloc_b) / total_alloc;
+                allo_c = parseFloat(this.alloc_c) / total_alloc;
+                
+
+                // reweight the dollar value of the portfolio
+                if (this.dollar_a > 0 || this.dollar_b > 0 || this.dollar_c > 0) {
+ 
+                    this.dollar_a = this.dol_a;
+                    this.dollar_b = this.dol_b;
+                    this.dollar_c = this.dol_c;   
+                    
+                }
+                
+                // weighted allocation display
+                this.allocation_a = Math.round(allo_a * 10000)/100;
+                this.allocation_b = Math.round(allo_b * 10000)/100;
+                this.allocation_c = Math.round(allo_c * 10000)/100;
+
+                this.alloc_a = this.allocation_a;
+                this.alloc_b = this.allocation_b;
+                this.alloc_c = this.allocation_c;
+                
+                this.updatePlots();
+                this.drawCharts();
+            },
+            updatePlots() {
+                // loop through x  and y values to update portfolio
+                for (let i = 0; i < this.all_base_data.index['x'].length; i++){
+                    let a_x = this.all_base_data.data_a['x'][i] * (this.alloc_a/100);
+                    let b_x = this.all_base_data.data_b['x'][i] * (this.alloc_b/100);
+                    let c_x = this.all_base_data.data_c['x'][i] * (this.alloc_c/100);
+                    let a_y = this.all_base_data.data_a['y'][i] * (this.alloc_a/100);
+                    let b_y = this.all_base_data.data_b['y'][i] * (this.alloc_b/100);
+                    let c_y = this.all_base_data.data_c['y'][i] * (this.alloc_c/100);
+
+                    this.all_base_data['portfolio']['x'][i] = a_x + b_x + c_x;
+                    this.all_base_data['portfolio']['y'][i] = a_y + b_y + c_y;
+                    
+                    this.all_base_data['dollars']['x'][i] = a_x + b_x + c_x;
+                    this.all_base_data['dollars']['y'][i] = (a_y * this.total_dollar) + (b_y * this.total_dollar) + (c_y * this.total_dollar);
+                }
+            },
+            drawCharts() {
+                // draw the three individual traces
+                let data = [];
+                
+                // create traces
+                for (obj in this.all_base_data){
+
+                    let trace = this.all_base_data[obj];
+                    trace['mode'] = 'lines';
+                
+                    // assign colors, styles, and update names
+                    if (obj === 'index') {
+                        trace['line'] = {color: 'rgba(55,55,55,.8)'};
+                        trace['name'] = 'Index';
+                    } else if (obj === 'data_a') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(244,109,67,1)'};
+                        trace['name'] = 'Moderate';
+                    } else if (obj === 'data_b') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(254,224,139,1)'};
+                        trace['name'] = 'Conservative';
+                    } else if (obj === 'data_c') {
+                        trace['line'] = {dash: 'dot', color: 'rgba(50,136,189,1)'};
+                        trace['name'] = 'Flex';
+                    } else if (obj === 'portfolio') {
+                        trace['line'] = {color: 'rgba(102,194,165,1)'};
+                        trace['name'] = 'Portfolio';
+                    } else if (obj === 'dollars') {
+                        trace['line'] = {color: 'rgba(102,194,165,1)'};
+                        trace['yaxis'] = 'y2';
+                    }
+
+                    // don't add the dollar value as a trace
+                    if (obj !== 'dollars') {
+                        data.push(trace);
+                    }
+                    
+                }
+                
+                // update layout
+                let layout = {
+                    plot_bgcolor: 'rgb(250,250,250)',
+                    //autosize: true,
+                    xaxis: {
+                        tickformat: '.1%',
+                        //zeroline: false,
+                        title: 'Market Return',
+                        hoverformat: '.1%',
+                        range: [-.45, .3]
+                    },
+                    yaxis: {
+                        tickformat: '.1%',
+                        title: 'Strategy Return',
+                        range: [-.5, .5]
+                    },
+                    hovermode: 'x unified',
+                    // yaxis2: {
+                    //     overlaying: 'y',
+                    //     side: 'right'
+                    // },
+                    legend: {
+                        x: .8,
+                        // xanchor: 'right',
+                        y: 0.03,
+                        bordercolor: 'rgb(55,55,55)',
+                        borderwidth: 1
+                    },
+                    
+                    title: 'Strategy and Portfolio Payoffs'
+                };
+
+                const config = {displayModeBar: false, responsive: true};
+                Plotly.newPlot('agg', data, layout, config);
+
+                // const chart = document.getElementById('agg'), total_dollar = this.total_dollar;
+                // const d3 = Plotly.d3;
+                // let legend = d3.select('chart.infolayer');
+
+                // chart.on('plotly_hover', function(data) {
+                //     let y_val = data.points[4]['y'];
+                //     this.est_portfolio = total_dollar*(1+y_val);
+                //     console.log(this.est_portfolio);
+                // });
+
+            },
+            async getData() {
+                // initial data load
+                // data object for the chart
+                //let all_data = { "index": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], "y": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], "mode": "lines", "line": { "color": "rgba(55,55,55,.8)" }, "name": "Index" }, "data_a": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], "y": [ 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, null ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(244,109,67,1)" }, "name": "Down 15" }, "data_b": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], "y": [ 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, null ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(254,224,139,1)" }, "name": "Down 30" }, 
+                //"data_c": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], 
+                //"y": [ 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.02, -0.04, -0.06, -0.08, -0.1, -0.12, -0.14, -0.16, -0.18, -0.2, -0.22, -0.24, -0.26, -0.28, -0.3, -0.32, -0.34, -0.36, -0.38, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5, null ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(50,136,189,1)" }, "name": "Flex" }, 
+                //"portfolio": { "x": [], "y": [], "mode": "lines", "line": { "color": "rgba(102,194,165,1)" }, "name": "Portfolio" }, 
+                //"dollars": { "x": [], "y": [], "name": "Dollars" } };
+                let all_data = { "index": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "mode": "lines", "line": { "color": "rgba(55,55,55,.8)" }, "name": "Index" }, "data_a": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.1223, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(244,109,67,1)" }, "name": "Down 15" }, "data_b": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(254,224,139,1)" }, "name": "Down 30" }, "data_c": { "x": [ 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.24, 0.23, 0.22, 0.21, 0.2, 0.19, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12, -0.13, -0.14, -0.15, -0.16, -0.17, -0.18, -0.19, -0.2, -0.21, -0.22, -0.23, -0.24, -0.25, -0.26, -0.27, -0.28, -0.29, -0.3, -0.31, -0.32, -0.33, -0.34, -0.35, -0.36, -0.37, -0.38, -0.39, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "y": [ 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.185, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.02, -0.04, -0.06, -0.08, -0.1, -0.12, -0.14, -0.16, -0.18, -0.2, -0.22, -0.24, -0.26, -0.28, -0.3, -0.32, -0.34, -0.36, -0.38, -0.4, -0.41, -0.42, -0.43, -0.44, -0.45, -0.46, -0.47, -0.48, -0.49, -0.5 ], "mode": "lines", "line": { "dash": "dot", "color": "rgba(50,136,189,1)" }, "name": "Flex" }, "portfolio": { "x": [], "y": [], "mode": "lines", "line": { "color": "rgba(102,194,165,1)" }, "name": "Portfolio" },"dollars": { "x": [], "y": [], "name": "Dollars" } };
+                this.all_base_data = all_data;
+            }
+        },
+        computed: {
+            // total_dollar: function() {
+            //     let dol_a = Number(this.dollar_a);
+            //     let dol_b = Number(this.dollar_b);
+            //     let dol_c = Number(this.dollar_c);
+                
+            //     let total = dol_a + dol_b + dol_c;
+                
+            //     return total;
+            // },
+            total_dollar_display: function(){
+                let display = null;
+                const formats = { style: 'currency', currency: 'USD'};
+
+                if (this.total_dollar > 0) {
+                    display = new Intl.NumberFormat('en-US', formats).format(this.total_dollar);
+                }
+
+                return display;
+            },
+            dol_a: function() {
+                return ((parseFloat(this.allocation_a) / 100) *  this.total_dollar).toFixed(2);
+            },
+            dol_b: function() {
+                return ((parseFloat(this.allocation_b) / 100) *  this.total_dollar).toFixed(2);
+            },
+            dol_c: function() {
+                return ((parseFloat(this.allocation_c) / 100) *  this.total_dollar).toFixed(2);
+            },
+        },
+        mounted: function() {
+            this.getData().then(data => {this.updateData()}).then(data => {this.drawCharts()});
+        },
+    }).mount('#main');
+
+    </script>
+</body>
+</html>
