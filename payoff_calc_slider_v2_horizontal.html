@@ -24,8 +24,14 @@
         }
         .col-ul {
             border-bottom: #555 solid 1.5px;
-            padding-top: 20px;
+            padding-top: 0px;
             /* border-radius: 1px; */
+        }
+        .shifted {
+            padding-left: 5px;
+        }
+        .logo {
+            padding-bottom: 0px;
         }
         p {
             padding-top: 5px;
@@ -47,15 +53,28 @@
         .title:not(:last-child) {
             margin-bottom: .5rem;
         }
+        figure {
+            margin-inline-start: 2px;
+            margin-inline-end: 2px;
+        }
     </style>
 </head>
 <body>
+    <!-- <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="https://dan-sgi.github.io/portfolio_blend_slider/payoff_calc_slider_v2_horizontal.html">
+                <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
+            </a>
+        </div>
+    </nav> -->
     <div id="main" class="container">
         <div class="column is-9 is-offset-1">
             <div class="columns">
-                <div class="column is-full col-lg">
-                    <h4 class="title is-4">Create A Custom Portfolio Allocation</h4>
+                <div class="column is-9 col-lg logo">
+                    <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
+            
                 </div>
+                
             </div>
             <!-- <div class="columns row">
                 <div class="column is-one-third col-sm">
@@ -129,6 +148,8 @@
                     </div>
                 </div>
                 <div class="column is-8">
+
+                    <h4 class="title is-4 shifted">Create A Custom Portfolio Allocation</h4>
                     <div v-if="total_dollar > 0" class="column is-11 col-ul">
                         <div class="level-left">
                             <div class="level-item">
@@ -149,6 +170,7 @@
                                 $0
                             </div>
                         </div>
+    
                     </div>
                     <div id="agg"></div>
                 </div>
