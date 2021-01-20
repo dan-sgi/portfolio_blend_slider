@@ -24,15 +24,13 @@
         }
         .col-ul {
             border-bottom: #555 solid 1.5px;
-            padding-top: 0px;
+            padding-top: 10px;
             /* border-radius: 1px; */
-        }
-        .shifted {
-            padding-left: 5px;
         }
         .logo {
             padding-bottom: 0px;
         }
+        
         p {
             padding-top: 5px;
             color: #333;
@@ -57,63 +55,50 @@
             margin-inline-start: 2px;
             margin-inline-end: 2px;
         }
+        .bottom{
+            border-bottom: #333 1px;
+        }
     </style>
 </head>
 <body>
-    <!-- <nav class="navbar">
-        <div class="navbar-brand">
-            <a href="https://dan-sgi.github.io/portfolio_blend_slider/payoff_calc_slider_v2_horizontal.html">
-                <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
-            </a>
+    <nav class="navbar has-shadow">
+        <div class="container">
+            <div class="navbar-brand">
+                <div class="navbar-item">
+                    
+                    <h4 class="title is-4">Create A Custom Portfolio Allocation</h4>
+                </div>
+            </div>
+            <div class="navbar-end">
+                
+                <a href="https://dan-sgi.github.io/portfolio_blend_slider/payoff_calc_slider_v2_horizontal.html">
+                    <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
+                </a>
+            </div>
         </div>
-    </nav> -->
+        
+    </nav>
     <div id="main" class="container">
         <div class="column is-9 is-offset-1">
             <div class="columns">
-                <div class="column is-9 col-lg logo">
-                    <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
-            
-                </div>
-                
-            </div>
-            <!-- <div class="columns row">
-                <div class="column is-one-third col-sm">
-                    <h5 class="title is-5">Moderate Allocation</h5>
-                    
-                    <div class="columns">
-                        <div class="column is-10 is-offset-1">
-                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_a" @input="updateDollarData">
-                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_a" @input="updateData" min="0" max="100" step="1">
-                            <p>{{ allocation_a}} %</p>
+                <!-- <div class="column is-9 col-lg logo">
+                    <div class="level">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <img src="https://raw.githubusercontent.com/dan-sgi/portfolio_blend_slider/main/logo.jpeg" height="53" width="114" >
+                            </div>
+                            <div class="level-item">
+                                <h4 class="title is-4">Create A Custom Portfolio Allocation</h4>
+                            </div>
+
                         </div>
                         
                     </div>
-                      
-                </div>
-                <div class="column is-one-third col-sm">
-                    <h5 class="title is-5">Conservative Allocation</h5>
                     
-                    <div class="columns">
-                        <div class="column is-10 is-offset-1">
-                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_b" @input="updateDollarData">
-                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_b" @input="updateData" min="0" max="100" step="1">
-                            <p>{{allocation_b}} %</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="column is-one-third col-sm">
-                    <h5 class="title is-5">Flex Allocation</h5>                
-                  
-                    <div class="columns">
-                        <div class="column is-10 is-offset-1">
-                            <input class="input" type="number" min="0" placeholder="$ Value" v-model="dollar_c" @input="updateDollarData">
-                            <input type="range" class="slider is-small is-dark is-fullwidth" v-model="alloc_c" @input="updateData" min="0" max="100" step="1">
-                            <p>{{allocation_c}} %</p>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+                </div> -->
+                
+            </div>
+            
             
         </div> 
             <div class="columns">
@@ -149,7 +134,7 @@
                 </div>
                 <div class="column is-8">
 
-                    <h4 class="title is-4 shifted">Create A Custom Portfolio Allocation</h4>
+                    
                     <div v-if="total_dollar > 0" class="column is-11 col-ul">
                         <div class="level-left">
                             <div class="level-item">
